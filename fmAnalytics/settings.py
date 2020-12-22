@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'homePage',
+    'mainApp',
     'crispy_forms'
 ]
 
@@ -122,4 +123,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-LOGIN_REDIRECT_URL = 'register'
+LOGIN_REDIRECT_URL = 'fm'
+
+LOGOUT_REDIRECT_URL = 'login'

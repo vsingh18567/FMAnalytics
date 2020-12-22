@@ -27,7 +27,7 @@ class User:
     def parseHtml(filepath: str) -> pd.DataFrame:
         now = time.time()
         with open(filepath, 'r') as f:
-            soup = bs(f)
+            soup = bs(f, features="html.parser")
         table = soup.find('table')
         rows = list()
         for row in table.find_all('tr'):
@@ -36,8 +36,8 @@ class User:
         later = time.time()
         headers = [td.get_text(strip=True) for td in table.find_all('th')]
         df = pd.DataFrame(rows[1:], columns=headers)
-        print(len(df.columns))
-        return df
+        print(later - now)
+        print(df.columns)
 
 
 User.parseHtml('S1.html')
