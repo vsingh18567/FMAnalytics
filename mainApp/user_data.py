@@ -6,38 +6,36 @@ from typing import TypedDict
 
 
 
-class User:
+class UserData:
     
     class UserSettings(TypedDict):
         height_choice: str
         currency: str
         wage_period: str
+        distance_choice: str
 
     def __init__(self, user_settings:UserSettings):
         if user_settings != None:
             self.height = user_settings['height_choice']
             self.currency = user_settings['currency']
             self.wage_period = user_settings['wage_period']
+            self.distance_choice = user_settings['distance_choice']
         else:
             self.height = None
             self.currency = None
             self.wage_period = None
+            self.distance_choice = None
     
     @staticmethod
-    def parseHtml(filepath: str) -> pd.DataFrame:
-        now = time.time()
-        with open(filepath, 'r') as f:
-            soup = bs(f, features="html.parser")
+    def parseHtml(file) -> pd.DataFrame:
+        soup = bs(file, features="html.parser")
         table = soup.find('table')
         rows = list()
         for row in table.find_all('tr'):
             cols = [td.get_text(strip=True) for td in row.find_all('td')]
             rows.append(cols)
-        later = time.time()
         headers = [td.get_text(strip=True) for td in table.find_all('th')]
         df = pd.DataFrame(rows[1:], columns=headers)
-        print(later - now)
         print(df.columns)
 
 
-User.parseHtml('S1.html')

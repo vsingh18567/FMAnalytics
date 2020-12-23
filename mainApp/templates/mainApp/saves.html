@@ -1,0 +1,16 @@
+{% extends "homePage/base.html" %}
+{% block title %} {{ user.first_name }} {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="content-section">
+    {% for save in save_list %}
+    <div class="post-preview">
+        <h3>{{save.team}}</h3>
+    </div>
+    {% endfor %}
+    <div>
+        <a href="{% url 'create-save' %}">Create New Save</a>
+    </div>
+</div>
+{% endblock %}
