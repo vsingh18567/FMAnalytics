@@ -4,14 +4,15 @@
 
 {% block content %}
 <div class="content-section">
+    <h2>Create Save</h2>
+    <hr>
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Create New Save</legend>
             {{ form|crispy }}
         </fieldset>
         <div class="form-group">
-            <button class="btn btn-secondary" style="background-color: #3c1361;" type="submit">Save</button>
+            <button class="btn btn-secondary" style="background-color: #3c1361;" type="submit">Save</button> <a href ="{% url 'view-saves' %}" class="btn btn-secondary">Back</a>
         </div>
     </form>
 </div>

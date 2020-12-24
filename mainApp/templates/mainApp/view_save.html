@@ -1,0 +1,10 @@
+{% extends "homePage/base.html" %}
+{% block title %} FM {{ user.username }} {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="content-section">
+    <h1>{{ save.team }}</h1>
+    <a href ="{% url 'upload' save.pk %}" class="btn btn-secondary" style="background-color: #3c1361;">Upload New Season</a>
+</div>
+{% endblock %}

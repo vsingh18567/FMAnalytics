@@ -3,7 +3,8 @@ from django.contrib.auth import views as auth_views
 from .views import *
 
 urlpatterns = [
-    path('upload/', UploadFile.as_view(), name='upload'),
+    path('save/<int:pk>/upload/', UploadFile.as_view(), name='upload'),
     path('', ViewSaves.as_view(), name='view-saves'),
-    path('create-save/', CreateSave.as_view(), name='create-save')
+    path('create-save/', CreateSave.as_view(), name='create-save'),
+    path('save/<int:pk>', SaveView.as_view(), name='save-page')
 ]

@@ -1,16 +1,26 @@
 {% extends "homePage/base.html" %}
-{% block title %} {{ user.first_name }} {% endblock %}
+{% block title %} FM {{ user.username }} {% endblock %}
 {% load crispy_forms_tags %}
 
 {% block content %}
 <div class="content-section">
-    {% for save in save_list %}
-    <div class="post-preview">
-        <h3>{{save.team}}</h3>
-    </div>
-    {% endfor %}
+    <h1>Your Saves</h1>
     <div>
         <a href="{% url 'create-save' %}">Create New Save</a>
     </div>
+    <hr>
+</div>
+<div class="content-section">
+    {% for save in saves %}
+    <div class="post-preview">
+        <h3 class="post-title">
+            <a href= "{% url 'save-page' save.pk %}" class="h3">{{save.team}}</a>
+        </h3>
+
+        <p class="post-meta">{{save.seasons}} seasons completed. Save started on {{save.date}}</p>
+    </div>
+    <hr>
+    {% endfor %}
+
 </div>
 {% endblock %}

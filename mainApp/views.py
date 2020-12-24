@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render
 from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .forms import *
@@ -11,14 +11,15 @@ from .models import *
 
 class UploadFile(LoginRequiredMixin, View):
 
-    def post(self, request):
+    def post(self, request, pk):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            print('hi')
-            x = request.FILES['file']
-            return UserData.parseHtml(x)
-    def get(self, request):
-        return render(request, 'mainApp/upload.html', {'form': UploadFileForm()})
+            UserData.parseHtml(request.FILES['file'])
+            return redirect('view-saves')
+        else:
+            return redirect('home')
+    def get(self, request, pk):
+        return render(request, 'mainApp/upload.html', {'pk':pk, 'form': UploadFileForm()})
 
 
 class ViewSaves(LoginRequiredMixin, View):
@@ -33,7 +34,29 @@ class CreateSave(LoginRequiredMixin, View):
         return render(request, 'mainApp/create_save.html', {'form': CreateSaveForm()})
     
     def post(self, request):
-        pass
+        form = CreateSaveForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            s = Save(
+                user = request.user,
+                team = data['team'],
+                currency = "$",
+                height_choice = data['height_choice'],
+                wage_period = data['wage_period'],
+                distance_choice = data['distance_choice']
+            )
+            s.save()
+            return redirect('view-saves')
         
+class SaveView(View):
 
+    def post(self, request):
+        pass
+
+    def get(self, request, pk):
+        save = Save.objects.get(pk=pk)
+        if save.user != request.user:
+            return redirect('view-saves')
         
+        return render(request, 'mainApp/view_save.html', {'save': save})
+    

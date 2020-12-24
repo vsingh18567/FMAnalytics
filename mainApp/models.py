@@ -13,7 +13,7 @@ class Save(models.Model):
     distance_choice = models.CharField(max_length=5)
 
     def __str__(self):
-        return self.pk + '|' + str(self.user)
+        return str(self.pk) + '|' + str(self.user)
     
 class Season(models.Model):
     save = models.ForeignKey(Save, on_delete=CASCADE)
@@ -23,7 +23,7 @@ class Season(models.Model):
     notes = models.TextField()
 
     def __str__(self):
-        return self.pk + '|' + str(self.save.user)
+        return str(self.pk) + '|' + str(self.save.user)
 
 class Player(models.Model):
     save = models.ForeignKey(Save, on_delete=CASCADE)
@@ -42,7 +42,7 @@ class Player(models.Model):
     home_grown_status = models.BooleanField()
 
     def __str__(self):
-        return self.pk + '|' + str(self.save.user)
+        return str(self.pk) + '|' + str(self.save.user)
 
 class PlayerSeason(models.Model):
     season = models.ForeignKey(Season, on_delete=CASCADE)
@@ -79,4 +79,4 @@ class PlayerSeason(models.Model):
     shot_percent = models.IntegerField()
 
     def __str__(self):
-        return self.pk + '|' + str(self.player.save.user)
+        return str(self.pk) + '|' + str(self.player.save.user)

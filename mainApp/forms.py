@@ -6,7 +6,7 @@ class UploadFileForm(forms.Form):
 
 class CreateSaveForm(forms.Form):
     team = forms.CharField(max_length=150)
-    height_choice = forms.ChoiceField(choices = [(1,'centimeters'), (2,'meters'), (3,'feet')])
-    wage_period = forms.ChoiceField(choices = [(1,'weekly'), (2,'monthly'), (3,'yearly')])
-    distance_choice = forms.ChoiceField(choices=[(1,'km'), (2,'miles')])
+    height_choice = forms.ChoiceField(choices = [("cm",'centimeters'), ("m",'meters'), ("ft",'feet')])
+    wage_period = forms.ChoiceField(choices = [("weekly",'weekly'), ("monthly",'monthly'), ("yearly",'yearly')])
+    distance_choice = forms.ChoiceField(choices=[("km",'km'), ("miles",'miles')])
     

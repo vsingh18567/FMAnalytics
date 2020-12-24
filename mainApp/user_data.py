@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup as bs
 import time
 import pandas as pd
 from typing import TypedDict
-
+from .models import Save, Player, Season, PlayerSeason
 
 
 
@@ -14,7 +14,8 @@ class UserData:
         wage_period: str
         distance_choice: str
 
-    def __init__(self, user_settings:UserSettings):
+    def __init__(self, save: Save, user_settings:UserSettings):
+        self.save = save
         if user_settings != None:
             self.height = user_settings['height_choice']
             self.currency = user_settings['currency']
@@ -37,5 +38,11 @@ class UserData:
         headers = [td.get_text(strip=True) for td in table.find_all('th')]
         df = pd.DataFrame(rows[1:], columns=headers)
         print(df.columns)
+
+    def add_player(row : pd.Series) -> None:
+        if len(Player.objects.filter(name=row['Name'])) == 0:
+            pass
+    def _main(self):
+        pass
 
 
