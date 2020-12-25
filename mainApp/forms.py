@@ -1,7 +1,10 @@
 from django import forms
 
-class UploadFileForm(forms.Form):
-    title = forms.CharField(max_length=50)
+class NewSeasonForm(forms.Form):
+    season_end_year = forms.IntegerField()
+    division = forms.IntegerField()
+    position = forms.IntegerField()
+    notes = forms.CharField(widget=forms.Textarea, max_length=4000)
     file = forms.FileField()
 
 class CreateSaveForm(forms.Form):

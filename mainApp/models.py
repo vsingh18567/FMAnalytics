@@ -13,20 +13,20 @@ class Save(models.Model):
     distance_choice = models.CharField(max_length=5)
 
     def __str__(self):
-        return str(self.pk) + '|' + str(self.user)
+        return str(self.pk) + '|' + str(self.user) + '|' + str(self.team)
     
 class Season(models.Model):
-    save = models.ForeignKey(Save, on_delete=CASCADE)
+    game_save = models.ForeignKey(Save, on_delete=CASCADE)
     end_year = models.IntegerField()
-    divison = models.IntegerField()
+    division = models.IntegerField()
     position = models.IntegerField()
     notes = models.TextField()
 
     def __str__(self):
-        return str(self.pk) + '|' + str(self.save.user)
+        return str(self.pk) + '|' + str(self.game_save.user) + '|' + str(self.end_year)
 
 class Player(models.Model):
-    save = models.ForeignKey(Save, on_delete=CASCADE)
+    game_save = models.ForeignKey(Save, on_delete=CASCADE)
     name = models.CharField(max_length=100)
     nationality = models.CharField(max_length=3)
     seasons = models.IntegerField()
@@ -37,19 +37,21 @@ class Player(models.Model):
     pom = models.IntegerField()
     reds = models.IntegerField()
     yellows = models.IntegerField()
-    positions = models.CharField(max_length=30)
+    best_role = models.CharField(max_length=30)
     max_value = models.FloatField()
     home_grown_status = models.BooleanField()
 
     def __str__(self):
-        return str(self.pk) + '|' + str(self.save.user)
+        return str(self.pk) + '|' + str(self.game_save.user) + '|' + str(self.name)
 
 class PlayerSeason(models.Model):
     season = models.ForeignKey(Season, on_delete=CASCADE)
     player = models.ForeignKey(Player, on_delete=CASCADE)
+    best_role = models.CharField(max_length=4)
     age = models.IntegerField()
     wage = models.IntegerField()
     playing_time = models.CharField(max_length=150)
+    value = models.FloatField()
     determination = models.IntegerField()
     teamwork = models.IntegerField()
     leadership = models.IntegerField()
@@ -66,7 +68,7 @@ class PlayerSeason(models.Model):
     goal_mistakes = models.IntegerField()
     header_percent = models.IntegerField()
     int_per_90 = models.FloatField()
-    tackles = models.IntegerField()
+    tackles = models.FloatField()
     tackle_ratio = models.FloatField()
     cr_c = models.IntegerField()
     dist_per_90 = models.FloatField()
@@ -79,4 +81,4 @@ class PlayerSeason(models.Model):
     shot_percent = models.IntegerField()
 
     def __str__(self):
-        return str(self.pk) + '|' + str(self.player.save.user)
+        return str(self.pk) + '|' + str(self.player.game_save.user) + '|' + str(self.player.name)

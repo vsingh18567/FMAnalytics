@@ -12,14 +12,24 @@ from .models import *
 class UploadFile(LoginRequiredMixin, View):
 
     def post(self, request, pk):
-        form = UploadFileForm(request.POST, request.FILES)
+        form = NewSeasonForm(request.POST, request.FILES)
         if form.is_valid():
-            UserData.parseHtml(request.FILES['file'])
+            data = form.cleaned_data
+            season = Season(
+                game_save = Save.objects.get(pk=pk),
+                end_year = data['season_end_year'],
+                division = data['division'],
+                position = data['position'],
+                notes = data['notes']
+            )
+            season.save()
+            user_data = UserData(request.FILES['file'], Save.objects.get(pk=pk), season, None)
+            user_data._main()
             return redirect('view-saves')
         else:
             return redirect('home')
     def get(self, request, pk):
-        return render(request, 'mainApp/upload.html', {'pk':pk, 'form': UploadFileForm()})
+        return render(request, 'mainApp/upload.html', {'pk':pk, 'form': NewSeasonForm()})
 
 
 class ViewSaves(LoginRequiredMixin, View):
