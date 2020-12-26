@@ -15,7 +15,7 @@ class UserData:
         distance_choice: str
 
     def __init__(self, file, save: Save, season: Season, user_settings:UserSettings):
-        self.save = save
+        self.game_save = save
         self.file = file
         self.season = season
         if user_settings != None:
@@ -44,23 +44,14 @@ class UserData:
     def get_player(self, row : pd.Series) -> Player:
         named_players = Player.objects.filter(name=row['Name'])
         for player in named_players:
-            if player.game_save == self.save:
+            if player.game_save == self.game_save:
                 return player
 
         player = Player(
-                game_save = self.save,
+                game_save = self.game_save,
                 name = row['Name'],
                 nationality = row['Nat'],
-                seasons = 0,
-                appearances = 0,
-                goals = 0,
-                assists = 0,
-                average_rating = 0,
-                pom = 0,
-                reds = 0,
-                yellows = 0,
                 best_role = row['Best Role'],
-                max_value = 0,
                 home_grown_status = len(row['Home-Grown Status']) > 2
                 )
         player.save()
@@ -156,7 +147,7 @@ class UserData:
             goal_mistakes = int(row['Gl Mst']),
             header_percent = extract_wage(row['Hdr %']),
             int_per_90 = extract_value(row['Int/90']),
-            tackles = extract_value(row['Tck']),
+            tackles_per_90 = extract_value(row['Tck']),
             tackle_ratio = extract_wage(row['Tck R']),
             cr_c = extract_cs(row['Cr C']),
             dist_per_90 = extract_dist(row['Dist/90']),
@@ -180,6 +171,11 @@ class UserData:
             player.average_rating = 0
         player.appearances += player_season.appearances
         player.goals += player_season.goals
+        player.xG += player_season.xG
+        try:
+            player.goals_per_xG = player.goals / player.xG
+        except:
+            player.goals_per_xG = 0
         player.assists += player_season.assists
         player.pom += player_season.pom
         player.reds += player_season.reds
@@ -187,12 +183,28 @@ class UserData:
         player.best_role = player_season.best_role
         player.max_value = max(player_season.value, player.max_value)
         player.home_grown_status = len(row['Home-Grown Status']) > 2
+
+        def per90_calculation(ovr_var, season_var, ovr_min=player.minutes, season_min=player_season.minutes):
+            try:
+                return (ovr_var * ovr_min + season_var * season_min)/(ovr_min + season_min)
+            except:
+                return 0
+        player.tackles_per_90 = per90_calculation(player.tackles_per_90,  player_season.tackles_per_90)
+        player.int_per_90 = per90_calculation(player.int_per_90, player_season.int_per_90)
+        player.dribbles_per_90 = per90_calculation(player.dribbles_per_90, 90 * player_season.dribbles / player_season.minutes)
+        player.pass_completion = per90_calculation(player.pass_completion, player_season.pass_completion)
+        player.key_passes_per_90 = per90_calculation(player.key_passes_per_90, 90 * player_season.key_passes / player_season.minutes)
+        player.shots_per_90 = per90_calculation(player.shots_per_90, 90 * player_season.shots / player_season.minutes)
+
         player.save()
 
     def _main(self):
         df : pd.DataFrame = self.parse_html()
         print(df.columns)
+        
         for row in df.iterrows():
             player : Player = self.get_player(row[1])
             self.add_data(player, row[1])
+        self.game_save.seasons = len(self.game_save.season_set.all())
+        self.game_save.save()
 

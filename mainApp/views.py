@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-
+from django.core import serializers
 from .forms import *
 from .user_data import UserData
 from .models import *
@@ -25,7 +25,7 @@ class UploadFile(LoginRequiredMixin, View):
             season.save()
             user_data = UserData(request.FILES['file'], Save.objects.get(pk=pk), season, None)
             user_data._main()
-            return redirect('view-saves')
+            return redirect('save-page', pk=pk)
         else:
             return redirect('home')
     def get(self, request, pk):
@@ -36,6 +36,8 @@ class ViewSaves(LoginRequiredMixin, View):
     
     def get(self, request):
         saves = Save.objects.filter(user = request.user)
+
+
         return render(request, 'mainApp/saves.html', {'saves': saves})
 
 class CreateSave(LoginRequiredMixin, View):
@@ -68,5 +70,9 @@ class SaveView(View):
         if save.user != request.user:
             return redirect('view-saves')
         
-        return render(request, 'mainApp/view_save.html', {'save': save})
+        players = Player.objects.filter(game_save=save)
+        players_json = serializers.serialize('json', players)
+        print(type(players_json))
+
+        return render(request, 'mainApp/view_save.html', {'save': save, 'players_json': players_json})
     
