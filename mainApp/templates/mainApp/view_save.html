@@ -4,11 +4,18 @@
 {% load static %}
 {% block content %}
 {{players_json|json_script:'playerdata'}}
+{{season_json|json_script:'seasondata'}}
 <div class="content-section">
     <h1>{{ save.team }}</h1>
     <a href ="{% url 'upload' save.pk %}" class="btn btn-secondary" style="background-color: #3c1361;">Upload New Season</a> <a href ="{% url 'view-saves' %}" class="btn btn-secondary">Back</a>
     <hr>
     <p>{{ save.seasons }} seasons completed. Started on {{ save.date }}</p>
 </div>
+<div class="content-section">
+    <h2>Players</h2><hr>
+    <div id="player-table"></div>
+</div>
 <script type="text/javascript" src="{% static 'js/view_save.js' %}"></script>
+
+
 {% endblock %}

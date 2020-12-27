@@ -8,6 +8,11 @@ FM Analytics is a web-app in progress that allows users to upload game data from
 $ pip install -r requirements.txt
 $ python manage.py runserver
 ```
+To trial with a dummy user that has the dummy data loaded
+```
+username: dummyuser
+password: dummypassword
+```
 
 ## Apps
 - `homePage` handles the home view and the various authentication processes

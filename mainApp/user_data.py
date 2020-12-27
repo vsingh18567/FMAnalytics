@@ -183,7 +183,7 @@ class UserData:
         player.best_role = player_season.best_role
         player.max_value = max(player_season.value, player.max_value)
         player.home_grown_status = len(row['Home-Grown Status']) > 2
-
+        player.minutes += player_season.minutes
         def per90_calculation(ovr_var, season_var, ovr_min=player.minutes, season_min=player_season.minutes):
             try:
                 return (ovr_var * ovr_min + season_var * season_min)/(ovr_min + season_min)

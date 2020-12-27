@@ -4,7 +4,8 @@ class NewSeasonForm(forms.Form):
     season_end_year = forms.IntegerField()
     division = forms.IntegerField()
     position = forms.IntegerField()
-    notes = forms.CharField(widget=forms.Textarea, max_length=4000)
+    teams_in_league = forms.IntegerField()
+    notes = forms.CharField(widget=forms.Textarea, max_length=4000, required=False)
     file = forms.FileField()
 
 class CreateSaveForm(forms.Form):

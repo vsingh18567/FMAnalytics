@@ -20,7 +20,8 @@ class Season(models.Model):
     end_year = models.IntegerField()
     division = models.IntegerField()
     position = models.IntegerField()
-    notes = models.TextField()
+    teams_in_league = models.IntegerField(default=20)
+    notes = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return str(self.pk) + '|' + str(self.game_save.user) + '|' + str(self.end_year)

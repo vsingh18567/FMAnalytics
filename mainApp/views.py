@@ -6,6 +6,7 @@ from django.core import serializers
 from .forms import *
 from .user_data import UserData
 from .models import *
+import json 
 
 # Create your views here.
 
@@ -20,6 +21,7 @@ class UploadFile(LoginRequiredMixin, View):
                 end_year = data['season_end_year'],
                 division = data['division'],
                 position = data['position'],
+                teams_in_league = data['teams_in_league'],
                 notes = data['notes']
             )
             season.save()
@@ -72,7 +74,20 @@ class SaveView(View):
         
         players = Player.objects.filter(game_save=save)
         players_json = serializers.serialize('json', players)
-        print(type(players_json))
+        season_data = []
+        seasons = save.season_set.all()
+        
+        for season in seasons:
+            season_data.append({
+                'year' : season.end_year,
+                'division' : season.division,
+                'position' : season.position,
+                'teams_in_league' : season.teams_in_league
+            })
+        
+        season_json = json.dumps(season_data)
+        
+        
 
-        return render(request, 'mainApp/view_save.html', {'save': save, 'players_json': players_json})
+        return render(request, 'mainApp/view_save.html', {'save': save, 'players_json': players_json, 'season_json':season_json})
     
