@@ -130,4 +130,6 @@ class PlayerView(View):
         player = save.player_set.all().get(name=name)
         playerseasons = serializers.serialize('json',player.playerseason_set.all())
         years_played = PlayerView.get_years_played(player)
-        return render(request, 'mainApp/view_player.html', {'player':player, 'playerseasons':playerseasons, 'playingyears':years_played,})
+        seasons = json.dumps(dict(Season.objects.values_list('pk', 'end_year')))
+        print(seasons)
+        return render(request, 'mainApp/view_player.html', {'player':player, 'playerseasons':playerseasons, 'playingyears':years_played, 'seasons': seasons})
