@@ -1,11 +1,11 @@
 {% extends "homePage/base.html" %}
-{% block title %} Upload Data {{pk}} {% endblock %}
+{% block title %} FM | Upload Data {{pk}} {% endblock %}
 {% load crispy_forms_tags %}
 
 
 {% block content %}
 <div class="content-section">
-    <h2>Create Save</h2>
+    <h2>Upload New Season</h2>
     <hr>
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}

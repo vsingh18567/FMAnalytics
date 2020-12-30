@@ -122,6 +122,12 @@ class UserData:
             if len(num_str) == 0:
                 return 0
             return float(num_str)
+        
+        def per_90(num: int, min : int) -> int:
+            if min == 0:
+                return 0
+            else:
+                return num / (min/90)
 
         player_season = PlayerSeason(
             season = self.season,
@@ -159,7 +165,9 @@ class UserData:
             shots = int(row['Shots']),
             shot_percent = extract_wage(row['Shot %'])
         )
-        player_season.save()
+        player_season.goals_per_90 = per_90(player_season.goals, player_season.minutes)
+        player_season.assists_per_90 = per_90(player_season.assists, player_season.minutes)
+        player_season.save() 
 
 
         # Step 2: Update player data
@@ -189,12 +197,20 @@ class UserData:
                 return (ovr_var * ovr_min + season_var * season_min)/(ovr_min + season_min)
             except:
                 return 0
+
+        player.goals_per_90 = per90_calculation(player.goals_per_90, player_season.goals_per_90)
+        player.assists_per_90 = per90_calculation(player.assists_per_90, player_season.assists_per_90)
         player.tackles_per_90 = per90_calculation(player.tackles_per_90,  player_season.tackles_per_90)
+        player.tackle_ratio = per90_calculation(player.tackle_ratio, player_season.tackle_ratio)
+        player.cr_c += player_season.cr_c
+        player.shot_percent = per90_calculation(player.shot_percent, player_season.shot_percent)
+        player.header_percent = per90_calculation(player.header_percent, player_season.header_percent)
         player.int_per_90 = per90_calculation(player.int_per_90, player_season.int_per_90)
         player.dribbles_per_90 = per90_calculation(player.dribbles_per_90, 90 * player_season.dribbles / player_season.minutes)
         player.pass_completion = per90_calculation(player.pass_completion, player_season.pass_completion)
         player.key_passes_per_90 = per90_calculation(player.key_passes_per_90, 90 * player_season.key_passes / player_season.minutes)
         player.shots_per_90 = per90_calculation(player.shots_per_90, 90 * player_season.shots / player_season.minutes)
+        player.minutes_per_season = player.minutes / player.seasons
 
         player.save()
 
@@ -208,3 +224,31 @@ class UserData:
         self.game_save.seasons = len(self.game_save.season_set.all())
         self.game_save.save()
 
+
+def calculate_best_players(save : Save):
+    save_players = save.player_set.all()
+    gk_players = {}
+    def_players = {}
+    mid_players = {}
+    att_players = {}
+    men_players = {}
+
+    # gk weighting
+    # ave_rating * 0.25, clean_sheet%age * 0.3, conceded * -0.3, goal_mistakes * -0.15
+
+    # def weighting
+    # ave_rating * 0.25, hdr% * 0.15, tckles * 0.2, tckl_ratio * 0.2, int/90 * 0.2
+
+    # mid weighting
+    # ave_rating * 0.25, asts/90 * 0.25, crc/90 * 0.125, drb/90 * 0.125, pass% * 0.125, keyP/90 * 0.125
+
+    # att weighting
+    # ave_rating * 0.25, gls/90 * 0.4, gls/xG * 0.12, shots/90 * 0.12, shot% * 0.12
+
+    # men weighting
+    # det * 0.33, team * 0.33, ldr * 0.33
+
+    data = []
+    for player in save_players:
+        seasons = player.playerseason_set.all()
+        
