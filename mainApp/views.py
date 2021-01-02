@@ -67,6 +67,20 @@ class SaveView(View):
     def post(self, request):
         pass
 
+    @staticmethod
+    def calculate_rating_wage(save: Save) -> dict:
+        pseasons = PlayerSeason.objects.all()
+        labels = []
+        ratings = []
+        wages = []
+        for ps in pseasons:
+            if ps.appearances >= 10:
+                labels.append(f'{ps.player.name}, {ps.season.end_year}')
+                ratings.append(ps.average_rating)
+                wages.append(ps.wage)
+        return {'labels': labels, 'ratings': ratings, 'wages': wages}
+            
+
     def get(self, request, pk):
         save = Save.objects.get(pk=pk)
         if save.user != request.user:
@@ -89,7 +103,9 @@ class SaveView(View):
         
         save_no = json.dumps(pk)
 
-        return render(request, 'mainApp/view_save.html', {'save': save, 'players_json': players_json, 'season_json':season_json, 'save_no': save_no})
+        rating_wages = json.dumps(SaveView.calculate_rating_wage(save))
+
+        return render(request, 'mainApp/view_save.html', {'save': save, 'players_json': players_json, 'season_json':season_json, 'rating_wages':rating_wages, 'save_no': save_no})
     
 
 class PlayerView(View):
@@ -131,5 +147,4 @@ class PlayerView(View):
         playerseasons = serializers.serialize('json',player.playerseason_set.all())
         years_played = PlayerView.get_years_played(player)
         seasons = json.dumps(dict(Season.objects.values_list('pk', 'end_year')))
-        print(seasons)
         return render(request, 'mainApp/view_player.html', {'player':player, 'playerseasons':playerseasons, 'playingyears':years_played, 'seasons': seasons})

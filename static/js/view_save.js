@@ -1,6 +1,8 @@
 const playerData = JSON.parse(JSON.parse(document.getElementById('playerdata').textContent));
 const seasonData = JSON.parse(JSON.parse(document.getElementById('seasondata').textContent));
 const saveNo = JSON.parse(JSON.parse(document.getElementById('save_no').textContent));
+const ratingWages = JSON.parse(JSON.parse(document.getElementById('rating_wages').textContent));
+console.log(ratingWages);
 
 function playerTable() {
   var cols = ['name', 'nationality', 'seasons', 'appearances', 'goals', 'assists', 'average_rating', 'pom', 'best_role', 'minutes','minutes_per_season', 'max_value', 'yellows', 'reds', 'home_grown_status', 'xG', 'goals_per_xG','goals_per_90', 'shots_per_90','assists_per_90', 'key_passes_per_90', 'pass_completion', 'dribbles_per_90', 'int_per_90', 'tackles_per_90'];
@@ -65,7 +67,6 @@ function playerTable() {
   });
   return table;
 }
-
 var table = playerTable();
 
 // document.getElementById("filter-btn").onclick = function () {
@@ -75,3 +76,16 @@ var table = playerTable();
 //   table.addFilter("appearances", ">=", num);
 // }
 
+var trace = {
+  x: ratingWages['wages'],
+  y: ratingWages['ratings'],
+  mode: 'markers',
+  type: 'scatter',
+  text: ratingWages['labels']
+}
+
+var layout = {
+  hovermode: 'closest'
+}
+
+Plotly.newPlot('wage-rating-chart', [trace], layout);

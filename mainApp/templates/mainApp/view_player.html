@@ -12,14 +12,16 @@
     <h1><strong>{{ player.name }}</strong></h1><h4>{{player.game_save.team}}</h4><a href="{% url 'save-page' player.game_save.pk %}" class="btn btn-secondary" style="background-color: #3c1361;">Back</a><hr>
    <strong>Seasons played:</strong>  {{player.seasons}} ({{playingyears}})
 </br>
-    <strong>Nat: </strong>{{player.nationality}}</br><strong>Homegrown: </strong>{% if player.home_grown_status%}Yes {% else %}No {% endif %}
+    <strong>Nat: </strong>{{player.nationality}}</br><strong>Homegrown: </strong>{% if player.home_grown_status %}Yes {% else %}No {% endif %}
 </div>
 <div class="content-section">
-    <h2>Seasons</h2><hr>  <label>Filter by Appearances: </label>
-    <input type="number" id="apps-filter"></input>
-    <button class="btn btn-secondary" id="filter-btn" style='background-color: #3c1361;'>Go</button>
-    <p></p>
+    <h2>Seasons</h2><hr>  
     <div id="player-table"></div>
+</div>
+<div class="content-section">
+    <h2>Charts</h2><hr>
+    <div id='ratingChart'><!-- Plotly chart will be drawn inside this DIV --></div>
+    <div id='valueWageChart'><!-- Plotly chart will be drawn inside this DIV --></div>
 </div>
 
 <script type="text/javascript" src="{% static 'js/view_player.js' %}"></script>

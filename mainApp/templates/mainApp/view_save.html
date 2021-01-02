@@ -6,6 +6,8 @@
 {{players_json|json_script:'playerdata'}}
 {{season_json|json_script:'seasondata'}}
 {{save_no|json_script:'save_no'}}
+{{rating_wages|json_script:'rating_wages'}}
+
 
 <div class="content-section">
     <h1><strong>{{ save.team }}</strong></h1>
@@ -26,6 +28,7 @@
 
 <div class="content-section">
     <h2>Best Players</h2><hr>
+    <div id="wage-rating-chart"></div>
 </div>
 
 <script type="text/javascript" src="{% static 'js/view_save.js' %}"></script>
