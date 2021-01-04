@@ -7,6 +7,8 @@ from .forms import *
 from .user_data import UserData, calculate_best_players
 from .models import *
 import json 
+from django.db.models import Max
+import time
 
 # Create your views here.
 
@@ -105,6 +107,8 @@ class SaveView(View):
 
         rating_wages = json.dumps(SaveView.calculate_rating_wage(save))
 
+        
+
         return render(request, 'mainApp/view_save.html', {'save': save, 'players_json': players_json, 'season_json':season_json, 'rating_wages':rating_wages, 'save_no': save_no})
     
 
@@ -139,12 +143,38 @@ class PlayerView(View):
             ovr_str += cur_str
             ovr_str += ", "
         return ovr_str[:-2]
+    
+    @staticmethod
+    def get_indicator_95th():
+        _player_count = Player.objects.all().count()
+        _95thpercentile = int(0.05 * _player_count)
+        data = {}
+        data.update({'gls/90': Player.objects.order_by('-goals_per_90')[_95thpercentile].goals_per_90})
+        data.update({'shots/90': Player.objects.order_by('-shots_per_90')[_95thpercentile].shots_per_90})
+        data.update({'asts/90': Player.objects.order_by('-assists_per_90')[_95thpercentile].assists_per_90})
+        data.update({'dribbles/90': Player.objects.order_by('-dribbles_per_90')[_95thpercentile].dribbles_per_90})
+        data.update({'key_passes/90': Player.objects.order_by('-key_passes_per_90')[_95thpercentile].key_passes_per_90})
+        data.update({'interceptions/90': Player.objects.order_by('-int_per_90')[_95thpercentile].int_per_90})
+        data.update({'tackles/90': Player.objects.order_by('-tackles_per_90')[_95thpercentile].tackles_per_90})
+        return json.dumps(data)
+
 
     def get(self, request, pk, name):
         save = Save.objects.get(pk=pk)
         name = name.replace("_", " ")
         player = save.player_set.all().get(name=name)
+        playerdata = {
+            'gls/90': player.goals_per_90,
+            'shots/90': player.shots_per_90,
+            'asts/90': player.assists_per_90,
+            'dribbles/90': player.dribbles_per_90,
+            'key_passes/90': player.key_passes_per_90,
+            'interceptions/90': player.int_per_90,
+            'tackles/90': player.tackles_per_90
+        }
+        playerdata_json = json.dumps(playerdata)
+        percentile_data = PlayerView.get_indicator_95th()
         playerseasons = serializers.serialize('json',player.playerseason_set.all())
         years_played = PlayerView.get_years_played(player)
         seasons = json.dumps(dict(Season.objects.values_list('pk', 'end_year')))
-        return render(request, 'mainApp/view_player.html', {'player':player, 'playerseasons':playerseasons, 'playingyears':years_played, 'seasons': seasons})
+        return render(request, 'mainApp/view_player.html', {'player':player, 'playerdata_json': playerdata_json, 'playerseasons':playerseasons, 'playingyears':years_played, 'seasons': seasons, 'percentile_data': percentile_data})

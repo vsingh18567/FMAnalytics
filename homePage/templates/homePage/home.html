@@ -1,5 +1,19 @@
 {% extends "homePage/base.html" %}
 
+{% block title %}
+{% if user.is_authenticated %} FM | {{user.username}} 
+{% else %} FM Analytics {% endif %}
+{% endblock %}
+
 {% block content %}
+<div class="content-section">
+  {% if user.is_authenticated %}
+  <h2>FM Analytics: {{user.username}}</h2>
+  {% else %}
+  <h2>FM Analytics</h2>
+  {% endif %}
+  <hr>
+</div>
+
 
 {% endblock %}

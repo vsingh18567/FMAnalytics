@@ -85,7 +85,11 @@ var trace = {
 }
 
 var layout = {
-  hovermode: 'closest'
+  title: 'Value for Money',
+  hovermode: 'closest',
+  yaxis: {title: 'Average Rating'},
+  xaxis: {title: 'Wage'},
+  colorway: ['#3c1361']
 }
 
 Plotly.newPlot('wage-rating-chart', [trace], layout);
