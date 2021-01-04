@@ -260,9 +260,6 @@ function generateChart() {
   Plotly.addTraces('customChart', data);
 
 
-  for (var sortedCol of sortedCols) {
-
-  }
 
   var layoutUpdate = {
     title: sel1.options[sel1.selectedIndex].innerHTML + ' + ' + sel2.options[sel2.selectedIndex].innerHTML,

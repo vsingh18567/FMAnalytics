@@ -7,15 +7,18 @@
 <div class="content-section">
     <h2>Upload New Season</h2>
     <hr>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <fieldset class="form-group">
-            {{ form|crispy }}
-        </fieldset>
-        <div class="form-group">
-            <button class="btn btn-secondary" style="background-color: #3c1361;" type="submit">Save</button> <a href ="{% url 'save-page' pk %}" class="btn btn-secondary">Back</a>
-        </div>
-    </form>
+    <div class="text-left">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-secondary" style="background-color: #3c1361;" type="submit">Save</button> <a href ="{% url 'save-page' pk %}" class="btn btn-secondary">Back</a>
+            </div>
+        </form>
+    </div>
+    
 </div>
 
 {% endblock %}

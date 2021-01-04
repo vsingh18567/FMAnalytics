@@ -71,15 +71,17 @@ class SaveView(View):
 
     @staticmethod
     def calculate_rating_wage(save: Save) -> dict:
-        pseasons = PlayerSeason.objects.all()
+        seasons = save.season_set.all()
         labels = []
         ratings = []
         wages = []
-        for ps in pseasons:
-            if ps.appearances >= 10:
-                labels.append(f'{ps.player.name}, {ps.season.end_year}')
-                ratings.append(ps.average_rating)
-                wages.append(ps.wage)
+        for s in seasons:
+            pseasons = s.playerseason_set.all()
+            for ps in pseasons:
+                if ps.appearances >= 10:
+                    labels.append(f'{ps.player.name}, {ps.season.end_year}')
+                    ratings.append(ps.average_rating)
+                    wages.append(ps.wage)
         return {'labels': labels, 'ratings': ratings, 'wages': wages}
             
 
