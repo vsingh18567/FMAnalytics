@@ -1,8 +1,59 @@
 const playerData = JSON.parse(JSON.parse(document.getElementById('playerdata').textContent));
 const seasonData = JSON.parse(JSON.parse(document.getElementById('seasondata').textContent));
 const saveNo = JSON.parse(JSON.parse(document.getElementById('save_no').textContent));
-const ratingWages = JSON.parse(JSON.parse(document.getElementById('rating_wages').textContent));
-console.log(ratingWages);
+const seasonPositions = JSON.parse(JSON.parse(document.getElementById('season_positions').textContent));
+const config = {responsive: true}
+
+console.log(seasonData);
+
+function seasonsChart() {
+  var coreData = seasonPositions['pos'];
+
+  var trace = {
+    x: coreData['seasons'],
+    y: coreData['ys'],
+    hovertemplate: '%{text}',
+    text: coreData['labels'],
+    name: 'Position'
+  };
+  var layout = {
+    xaxis: {
+      range: [0, Math.max(coreData['seasons'])],
+      dtick: 1,
+      title: 'Seasons'
+    },
+    yaxis: {
+      range: [0, seasonPositions['max']],
+      tickvals: coreData['tickvals'],
+      ticktext: coreData['ticktext']
+    },
+    colorway: ['#3c1361', '#a262a9'],
+    title: 'League Positions'
+  };
+
+  Plotly.newPlot('seasonPositions', [trace], layout, config);
+
+}
+
+seasonsChart();
+
+function seasonDropdown() {
+  var dropdown = document.getElementById('season-dropdown');
+  for (var season of seasonData) {
+    var option = document.createElement('option');
+    option.value = season.pk;
+    option.innerHTML = (season.year - 1) + '-' + season.year;
+    dropdown.appendChild(option);
+  }
+}
+
+seasonDropdown();
+
+function viewSeason() {
+  var seasonPk = document.getElementById('season-dropdown').value;
+
+  window.location.href = "/fm/save/".concat(saveNo).concat("/season/").concat(seasonPk);
+}
 
 function playerTable() {
   var cols = ['name', 'nationality', 'seasons', 'appearances', 'goals', 'assists', 'average_rating', 'pom', 'best_role', 'minutes','minutes_per_season', 'max_value', 'yellows', 'reds', 'home_grown_status', 'xG', 'goals_per_xG','goals_per_90', 'shots_per_90','assists_per_90', 'key_passes_per_90', 'pass_completion', 'dribbles_per_90', 'int_per_90', 'tackles_per_90'];
@@ -69,27 +120,6 @@ function playerTable() {
 }
 var table = playerTable();
 
-// document.getElementById("filter-btn").onclick = function () {
-//   table.clearFilter();
-//   console.log("hi");
-//   var num = document.getElementById("apps-filter").value;
-//   table.addFilter("appearances", ">=", num);
-// }
 
-var trace = {
-  x: ratingWages['wages'],
-  y: ratingWages['ratings'],
-  mode: 'markers',
-  type: 'scatter',
-  text: ratingWages['labels']
-}
 
-var layout = {
-  title: 'Value for Money',
-  hovermode: 'closest',
-  yaxis: {title: 'Average Rating'},
-  xaxis: {title: 'Wage'},
-  colorway: ['#3c1361']
-}
 
-Plotly.newPlot('wage-rating-chart', [trace], layout);

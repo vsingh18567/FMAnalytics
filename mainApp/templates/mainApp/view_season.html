@@ -1,0 +1,16 @@
+{% extends "homePage/base.html" %}
+{% block title %} FM | {{season.game_save.team}}, {{ season.pk }} {% endblock %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+{{players|json_script:'players'}}
+
+<div class="content-section">
+  <div>
+      <h1><strong>{{ season.game_save.team }}</strong></h1><h4>{{season.end_year}}</h4><a href="{% url 'save-page' season.game_save.pk %}" class="btn btn-secondary" style="background-color: #3c1361;">Back</a><hr>
+  </div>
+  
+</div>
+
+<script type="text/javascript" src="{% static 'js/view_season.js' %}"></script>
+{% endblock %}

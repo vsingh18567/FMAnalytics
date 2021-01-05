@@ -7,16 +7,32 @@
 {{season_json|json_script:'seasondata'}}
 {{save_no|json_script:'save_no'}}
 {{rating_wages|json_script:'rating_wages'}}
+{{season_positions|json_script:'season_positions'}}
 
 
 <div class="content-section">
     <h1><strong>{{ save.team }}</strong></h1>
-    <a href ="{% url 'upload' save.pk %}" class="btn btn-secondary" style="background-color: #3c1361;">Upload New Season</a> <a href ="{% url 'view-saves' %}" class="btn btn-secondary">Back</a>
+    <a href ="{% url 'upload' save.pk %}" class="btn btn-secondary" style="background-color: #3c1361;">Upload New Season</a> <a href ="{% url 'view-saves' %}" class="btn btn-secondary">Back</a> <a href ="{% url 'delete-save' save.pk %}" class="btn btn-danger">Delete</a>
     <hr>
     <p>{{ save.seasons }} seasons completed. Save started on {{ save.date }}</p>
 </div>
 <div class="content-section">
-    <h2>Seasons</h2><hr>
+    <h2>Seasons</h2><hr> 
+    <div class="form-group container">
+        <form>
+            <div style="width:40%; margin: 0 auto">
+                <div style="width:40%; float: left;">
+                    <select name="season-dropdown" id="season-dropdown" class="form-control">
+                    </select>
+                </div>
+                <div style="width:40%; float:right">
+                    <button onclick="viewSeason()" class="btn btn-secondary" style="background-color: #3c1361;" type="button">View season in depth</button>
+                </div>
+
+            </div>
+        </form>
+    </div><br><br>
+    <div id="seasonPositions"></div>
 </div>
 <div class="content-section">
     <h2>Players</h2><hr>  

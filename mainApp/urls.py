@@ -7,5 +7,7 @@ urlpatterns = [
     path('', ViewSaves.as_view(), name='view-saves'),
     path('create-save/', CreateSave.as_view(), name='create-save'),
     path('save/<int:pk>', SaveView.as_view(), name='save-page'),
-    path('save/<int:pk>/<str:name>',PlayerView.as_view(), name='player-page')
+    path('save/<int:pk>/delete', DeleteSave.as_view(), name='delete-save'),
+    path('save/<int:pk>/<str:name>',PlayerView.as_view(), name='player-page'),
+    path('save/<int:pk>/season/<int:pk2>', SeasonView.as_view(), name='season-page')
 ]

@@ -147,6 +147,7 @@ function ratingChart() {
   var layout = {
     colorway: ['#3c1361', '#a262a9'],
     title: 'Apps & Ave. Rating',
+    xaxis: {dtick: 1},
     yaxis: {title: 'Ave. Rating'},
     yaxis2: {
       title: 'Apps',
@@ -175,6 +176,7 @@ function wageValueChart() {
   var layout2 = {
     colorway: ['#3c1361', '#a262a9'],
     title: 'Value & Wage',
+    xaxis: {dtick: 1},
     yaxis: {title: 'Value (M)'},
     yaxis2: {
       title: 'Wage (K)',
@@ -213,7 +215,7 @@ function customChart() {
   var layout = {
     title: 'Custom Chart',
     yaxis: {title: '?'},
-    xaxis: {title: 'Season'},
+    xaxis: {title: 'Season', dtick: 1},
     yaxis2: {
       title: '?',
       overlaying: 'y',
@@ -264,7 +266,7 @@ function generateChart() {
   var layoutUpdate = {
     title: sel1.options[sel1.selectedIndex].innerHTML + ' + ' + sel2.options[sel2.selectedIndex].innerHTML,
     yaxis: {title: sel1.options[sel1.selectedIndex].innerHTML},
-    xaxis: {title: 'Season'},
+    xaxis: {title: 'Season', dtick: 1},
     yaxis2: {
       title: sel2.options[sel2.selectedIndex].innerHTML,
       overlaying: 'y',

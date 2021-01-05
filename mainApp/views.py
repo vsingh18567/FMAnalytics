@@ -1,3 +1,4 @@
+from django.contrib.auth.views import redirect_to_login
 from django.shortcuts import redirect, render
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -8,8 +9,7 @@ from .user_data import UserData, calculate_best_players
 from .models import *
 import json 
 from django.contrib import messages
-
-import time
+import collections
 
 # Create your views here.
 
@@ -43,12 +43,18 @@ class UploadFile(LoginRequiredMixin, View):
         else:
             return redirect('home')
     def get(self, request, pk):
+        if not request.user.is_authenticated:
+            return render('login')
+        elif Save.objects.get(pk=pk).user != request.user:
+            return render('view-saves')
         return render(request, 'mainApp/upload.html', {'pk':pk, 'form': NewSeasonForm()})
 
 
 class ViewSaves(LoginRequiredMixin, View):
     
     def get(self, request):
+        if not request.user.is_authenticated:
+            return render('login')
         saves = Save.objects.filter(user = request.user)
 
 
@@ -57,6 +63,8 @@ class ViewSaves(LoginRequiredMixin, View):
 class CreateSave(LoginRequiredMixin, View):
 
     def get(self, request):
+        if not request.user.is_authenticated:
+            return render('login')
         return render(request, 'mainApp/create_save.html', {'form': CreateSaveForm()})
     
     def post(self, request):
@@ -93,7 +101,43 @@ class SaveView(View):
                     ratings.append(ps.average_rating)
                     wages.append(ps.wage)
         return {'labels': labels, 'ratings': ratings, 'wages': wages}
-            
+    
+    @staticmethod
+    def calculate_season_positions(save: Save):
+        seasons = save.season_set.all()
+        divisions = {}
+        print(seasons)
+        for season in seasons:
+            divisions.update({season.division : season.teams_in_league})
+        total_teams = 0
+        division_pos = {}
+        tickvals = []
+        ticktext = []
+        for key in sorted(divisions, reverse=True):
+            division_pos.update({key: total_teams})
+            total_teams += divisions[key]
+            tickvals.append(total_teams)
+            ticktext.append(f'Div {key}')
+        season_positions = {'seasons': [], 'ys': [], 'labels': [], 'ticktext': ticktext, 'tickvals': tickvals}
+        num_to_word = {1: '1st', 2: '2nd', 3: '3rd'}
+        for season in seasons:
+            boost = division_pos[season.division]
+            true_y = divisions[season.division] - season.position + boost
+            if season.position <= 3:
+                label = f'Div {season.division}, {num_to_word[season.position]} place'
+            else:
+                label = f'Div {season.division}, {season.position}th place'
+            season_positions['seasons'].append(season.end_year)
+            season_positions['ys'].append(true_y)
+            season_positions['labels'].append(label)
+        
+        if len(season_positions['seasons']) < 10:
+            season_positions['seasons'] = [i + season_positions['seasons'][0] for i in range (0,10)]
+        else:
+            season_positions['seasons'] = season_positions['seasons'][-10:]
+
+        json_data = {'max': total_teams, 'pos': season_positions}
+        return json_data
 
     def get(self, request, pk):
         save = Save.objects.get(pk=pk)
@@ -107,6 +151,7 @@ class SaveView(View):
         calculate_best_players(save)
         for season in seasons:
             season_data.append({
+                'pk': season.pk,
                 'year' : season.end_year,
                 'division' : season.division,
                 'position' : season.position,
@@ -116,12 +161,9 @@ class SaveView(View):
         season_json = json.dumps(season_data)
         
         save_no = json.dumps(pk)
-
-        rating_wages = json.dumps(SaveView.calculate_rating_wage(save))
-
         
-
-        return render(request, 'mainApp/view_save.html', {'save': save, 'players_json': players_json, 'season_json':season_json, 'rating_wages':rating_wages, 'save_no': save_no})
+        season_positions = json.dumps(SaveView.calculate_season_positions(save))
+        return render(request, 'mainApp/view_save.html', {'save': save, 'players_json': players_json, 'season_json':season_json, 'save_no': save_no, 'season_positions':season_positions})
     
 
 class PlayerView(View):
@@ -173,6 +215,8 @@ class PlayerView(View):
 
     def get(self, request, pk, name):
         save = Save.objects.get(pk=pk)
+        if save.user != request.user:
+            return render('view-saves')
         name = name.replace("_", " ")
         player = save.player_set.all().get(name=name)
         playerdata = {
@@ -189,4 +233,32 @@ class PlayerView(View):
         playerseasons = serializers.serialize('json',player.playerseason_set.all())
         years_played = PlayerView.get_years_played(player)
         seasons = json.dumps(dict(Season.objects.values_list('pk', 'end_year')))
-        return render(request, 'mainApp/view_player.html', {'player':player, 'playerdata_json': playerdata_json, 'playerseasons':playerseasons, 'playingyears':years_played, 'seasons': seasons, 'percentile_data': percentile_data})
+        return render(request, 'mainApp/view_player.html', {'player': player, 'playerdata_json': playerdata_json, 'playerseasons':playerseasons, 'playingyears':years_played, 'seasons': seasons, 'percentile_data': percentile_data})
+
+
+class SeasonView(View):
+
+    def get(self, request, pk, pk2):
+        save = Save.objects.get(pk=pk)
+        if save.user != request.user:
+            return render('view-saves')
+        season = Season.objects.get(pk=pk2)
+        players = serializers.serialize('json', season.playerseason_set.all())
+        return render(request, 'mainApp/view_season.html', {'season':season, 'players': players})
+
+    def post(self, request):
+        pass
+
+class DeleteSave(View):
+
+    def get(self, request, pk):
+        save = Save.objects.get(pk=pk)
+        if save.user != request.user:
+            return render('view-saves')
+        print(save.pk)
+        return render(request, 'mainApp/delete_save.html', {'save': save})
+
+    def post(self, request, pk):
+        Save.objects.get(pk=pk).delete()
+        messages.success(request, 'Save deleted')
+        return redirect('view-saves')
