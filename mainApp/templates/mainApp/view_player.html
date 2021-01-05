@@ -18,51 +18,47 @@
     <div>
         <div class="container" style="width:100%; display: table;">
             <table style="width: 100%; table-layout: auto;" class="table table-borderless">
-                <thead>
-                </thead>
-                <tbody>
-                    <tr class="noBorder">
-                        <th scope="row">Nationality:</th>
-                        <td>{{player.nationality}}</td>
-                        <th scope="row">Seasons:</th>
-                        <td>{{player.seasons}}</td>
-                        <th>Goals:</th>
-                        <td>{{player.goals}}</td>
-                        <th>Max Value:</th>
-                        <td>
-                            {% if player.max_value > 1000000 %}
-                            {{player.max_value|div:1000000|floatformat:"1"}} M
-                            {% else %}
-                            {{player.max_value|div:1000|floatformat:"1"}} K
-                            {% endif %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Homegrown:</th>
-                        <td>
-                            {% if player.home_grown_status %}
-                                Yes
-                            {% else %}
-                                No
-                            {% endif %}</td>
-                        <th>Appearances:</th>
-                        <td>{{player.appearances}}</td>
-                        <th>Assists:</th>
-                        <td>{{player.assists}}</td>
-                        <th>Reds:</th>
-                        <td>{{player.reds}}</td>
-                    </tr>
-                    <tr>
-                        <th>Best Role:</th>
-                        <td>{{player.best_role}}</td>
-                        <th>Minutes/Season</th>
-                        <td>{{player.minutes_per_season|floatformat:"0"}}</td>
-                        <th>Average Rating:</th>
-                        <td>{{player.average_rating|floatformat:"2"}}</td>
-                        <th>Yellows:</th>
-                        <td>{{player.yellows}}</td>
-                    </tr>
-                </tbody>
+                <tr class="noBorder">
+                    <th scope="row">Nationality:</th>
+                    <td>{{player.nationality}}</td>
+                    <th scope="row">Seasons:</th>
+                    <td>{{player.seasons}} ({{playingyears}})</td>
+                    <th>Goals:</th>
+                    <td>{{player.goals}}</td>
+                    <th>Max Value:</th>
+                    <td>
+                        {% if player.max_value > 1000000 %}
+                        {{player.max_value|div:1000000|floatformat:"1"}} M
+                        {% else %}
+                        {{player.max_value|div:1000|floatformat:"1"}} K
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Homegrown:</th>
+                    <td>
+                        {% if player.home_grown_status %}
+                            Yes
+                        {% else %}
+                            No
+                        {% endif %}</td>
+                    <th>Appearances:</th>
+                    <td>{{player.appearances}}</td>
+                    <th>Assists:</th>
+                    <td>{{player.assists}}</td>
+                    <th>Reds:</th>
+                    <td>{{player.reds}}</td>
+                </tr>
+                <tr>
+                    <th>Best Role:</th>
+                    <td>{{player.best_role}}</td>
+                    <th>Minutes/Season</th>
+                    <td>{{player.minutes_per_season|floatformat:"0"}}</td>
+                    <th>Average Rating:</th>
+                    <td>{{player.average_rating|floatformat:"2"}}</td>
+                    <th>Yellows:</th>
+                    <td>{{player.yellows}}</td>
+                </tr>
             </table>
         </div>
     </div>

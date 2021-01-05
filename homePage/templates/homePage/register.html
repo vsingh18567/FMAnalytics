@@ -3,14 +3,28 @@
 
 {% load crispy_forms_tags %}
 {% block content %}
-<div class="content-section">
+{% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+<div class="content-section text-left" style="padding-left: 8%; padding-right: 8%;">
     <form method="POST">
         {% csrf_token %}
         <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Join Today</legend>
+            <legend class="border-bottom mb-4 text-center">Join Today</legend>
             {{ form|crispy }}
         </fieldset>
-        <div class="form-group">
+        <div class="form-group text-left">
             <button class="btn btn-secondary" style="background-color: #3c1361;" type="submit">Sign Up</button>
         </div>
     </form>

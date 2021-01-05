@@ -17,6 +17,18 @@ class UserData:
     def __init__(self, file, save: Save, season: Season, user_settings:UserSettings):
         self.game_save = save
         self.file = file
+        '''
+        self.state takes 4 different values
+            - "FINE": this is a legitimate documne
+            - "HTML": not an HTML file
+            - "PANDAS": couldn't create pandas. weirdly structured HTML
+            - "PARSING": couldn't find columns. wrong squad view?
+        '''
+        if not (file.name.lower().endswith('.html')):
+            self.state = "HTML"
+        else:
+            self.state = "FINE"
+
         self.season = season
         if user_settings != None:
             self.height = user_settings['height_choice']
@@ -31,15 +43,19 @@ class UserData:
     
 
     def parse_html(self) -> pd.DataFrame:
-        soup = bs(self.file, features="html.parser")
-        table = soup.find('table')
-        rows = list()
-        for row in table.find_all('tr'):
-            cols = [td.get_text(strip=True) for td in row.find_all('td')]
-            rows.append(cols)
-        headers = [td.get_text(strip=True) for td in table.find_all('th')]
-        df = pd.DataFrame(rows[1:], columns=headers)
-        return df
+        try:
+            soup = bs(self.file, features="html.parser")
+            table = soup.find('table')
+            rows = list()
+            for row in table.find_all('tr'):
+                cols = [td.get_text(strip=True) for td in row.find_all('td')]
+                rows.append(cols)
+            headers = [td.get_text(strip=True) for td in table.find_all('th')]
+            df = pd.DataFrame(rows[1:], columns=headers)
+            return df
+        except:
+            self.state = "PANDAS"
+            return None
 
     def get_player(self, row : pd.Series) -> Player:
         named_players = Player.objects.filter(name=row['Name'])
@@ -215,14 +231,21 @@ class UserData:
         player.save()
 
     def _main(self):
+        if self.state == "HTML":
+            return self.state
         df : pd.DataFrame = self.parse_html()
-        print(df.columns)
-        
-        for row in df.iterrows():
-            player : Player = self.get_player(row[1])
-            self.add_data(player, row[1])
-        self.game_save.seasons = len(self.game_save.season_set.all())
-        self.game_save.save()
+        if self.state == "PANDAS":
+            return self.state
+        try:
+            for row in df.iterrows():
+                player : Player = self.get_player(row[1])
+                self.add_data(player, row[1])
+            self.game_save.seasons = len(self.game_save.season_set.all())
+            self.game_save.save()
+            return self.state
+        except:
+            self.state = "PARSING"
+            return self.state
 
 
 def calculate_best_players(save : Save):

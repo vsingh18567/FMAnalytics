@@ -6,13 +6,49 @@
 {% endblock %}
 
 {% block content %}
-<div class="content-section">
+<div class="content-section" style="font-family: arial;">
   {% if user.is_authenticated %}
   <h2>FM Analytics: {{user.username}}</h2>
   {% else %}
   <h2>FM Analytics</h2>
   {% endif %}
   <hr>
+  <div class="text-left" style="padding-left: 8%; padding-right: 8%; ">
+    <p><h5>Welcome to FM Analytics!</h5>
+    {% if not user.is_authenticated %}
+    Please <a href="{% url 'login' %}">login</a> or <a href="{% url 'register' %}">register</a> to use the app. 
+    {% endif %}
+    </p>
+    <p>FM Analytics is a webapp that allows players of the Football Manager video game series to store their squad data as they journey through their save, tracking and analysing players' performances over seasons. </p> 
+    <h3>Using the app</h3><hr>
+    <ul>
+      <li>To use the app, it is important that the squad view is properly formatted for processing. Subscribe to the associated squad view on <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2350411854">Steam</a>.</li>
+      <li>At the end of every season (or after the last match of the season - around May/June in England), navigate to the squad view and load the FM Analytics Squad View. It is recommended that you set a yearly reminder (by creating a note with a recurring reminder) to make sure you don't miss this date.</li>
+      <li>Print screen - either by clicking Ctrl-P / Cmd-P or navigating to Menu/Print Screen. Make sure to save as a <u><strong>Web Page</strong></u>. This should save your data as an HTML file.</li>
+      <li>Go to your save's "Upload New Season" page, and upload the HTML document there with some other information about your season. Done!</li>
+    </ul>
+    <br>
+    {% if not user.is_authenticated %}
+    <p><strong>Don't know whether this is worth all the time/effort?</strong> Feel free to <a href="{% url 'login' %}">log in</a> with a dummy account (Username: dummyuser, Password: dummypassword) and see what it's all about!</p>
+    {% endif %}
+    <h3>Caveats</h3><hr>
+    <p>Unfortunately, given that the app needs a specifically-formatted squad-view, there are a few restrictions on who can use the app:</p>
+    <ul>
+      <li>Your Football Manager needs to be in <u>English</u>. Internally, the app looks for certain column titles (such as 'Name'), which are only configured for English.</li>
+      <li>For now, this is limited to FM21. There is no equivalent FM18/19/20 squad view, and the app assumes that the xG statistic is part of the squad view. If there is sufficient interest, I can look into configuring this for older versions of FM.</li><br>
+    </ul>
+
+    <h3>Support the Project</h3><hr>
+    <p>If you find any bugs/errors (anything from typos to 404 errors), please let me know in one of three ways:
+    <ul>
+      <li>Create an issue on <a href="https://github.com/vsingh18567/FMAnalytics/issues">Github</a></li>
+      <li><a href="#">Report it</a> on this website</li>
+      <li>Message me on Reddit at <a href="https://www.reddit.com/user/vsingh18567">u/vsingh18567</a></li>
+    </ul><br>
+    If you are interested in directly contributing code to the project, please check out the Github page and message me on Reddit. 
+    </p>
+  </div>
+  
 </div>
 
 

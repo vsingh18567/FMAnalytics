@@ -7,7 +7,8 @@ from .forms import *
 from .user_data import UserData, calculate_best_players
 from .models import *
 import json 
-from django.db.models import Max
+from django.contrib import messages
+
 import time
 
 # Create your views here.
@@ -28,8 +29,17 @@ class UploadFile(LoginRequiredMixin, View):
             )
             season.save()
             user_data = UserData(request.FILES['file'], Save.objects.get(pk=pk), season, None)
-            user_data._main()
-            return redirect('save-page', pk=pk)
+            state = user_data._main()
+            if state == "FINE":
+                return redirect('save-page', pk=pk)
+            elif state == "HTML":
+                messages.warning(request, "Oops - that wasn't an HTML file")
+            elif state == "PANDAS":
+                messages.warning(request, "Hmm, that HTML file was weird. Are you sure it has a table?")
+            else:
+                messages.warning(request, "Hmm, that HTML file was weird. Are you sure you're using the correct squad view?")
+            return render(request, 'mainApp/upload.html', {'pk':pk, 'form': NewSeasonForm()})
+
         else:
             return redirect('home')
     def get(self, request, pk):
