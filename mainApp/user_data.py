@@ -247,9 +247,33 @@ class UserData:
             self.state = "PARSING"
             return self.state
 
-
 def calculate_best_players(save : Save):
+    then = time.time()
     save_players = save.player_set.all()
+    df = pd.DataFrame(list(save_players.values()))
+    df = df.loc[df['appearances'] > df['appearances'].median() * 0.75]
+    normalise_cols = ['goals', 'goals_per_90', 'xG', 'shots_per_90', 'shot_percent',
+                        'key_passes_per_90', 'pass_completion', 'dribbles_per_90', 'assists', 'assists_per_90',
+                        'int_per_90', 'tackles_per_90', 'tackle_ratio', 'average_rating']
+    for col in normalise_cols:
+        df[col] = (df[col] - df[col].mean())/(df[col].std())
+    
+    df['defensive'] = (0.1 * df['average_rating'] + 0.3 * df['tackles_per_90'] + 0.15 * df['tackle_ratio'] + df['int_per_90'] * 0.3)
+    df['creative'] = (0.1 * df['average_rating'] + 0.2 * df['assists_per_90'] + 0.15 * df['assists'] + df['key_passes_per_90'] * 0.3 + df['dribbles_per_90'] * 0.2 + df['pass_completion'] * 0.3)
+    df['attacking'] = (0.1 * df['average_rating'] + df['goals'] * 0.1 + df['goals_per_90'] * 0.32 + df['xG'] * 0.12 + df['shots_per_90'] * 0.15 + df['shot_percent'] * 0.1)
+
+    for col in ['defensive', 'creative', 'attacking']:
+        df[col] = ((df[col] - df[col].mean())/(df[col].std()) + 1) * 50
+    def_ = (list(df.nlargest(8, 'defensive')[['name', 'defensive']].values))
+    cre_ = (list(df.nlargest(8, 'creative')[['name', 'creative']].values))
+    att_ = list(df.nlargest(8, 'attacking')[['name', 'attacking']].values)
+    for data in [def_, cre_, att_]:
+        for i in range(len(data)):
+            data[i] = data[i].tolist()
+
+    print(time.time() - then)
+    return {'def': def_, 'cre': cre_, 'att': att_}
+
     gk_players = {}
     def_players = {}
     mid_players = {}

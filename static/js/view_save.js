@@ -3,6 +3,7 @@ const seasonData = JSON.parse(JSON.parse(document.getElementById('seasondata').t
 const saveNo = JSON.parse(JSON.parse(document.getElementById('save_no').textContent));
 const seasonPositions = JSON.parse(JSON.parse(document.getElementById('season_positions').textContent));
 const config = {responsive: true}
+const bestPlayers = JSON.parse(JSON.parse(document.getElementById('best_players').textContent));
 
 console.log(seasonData);
 
@@ -89,9 +90,17 @@ function playerTable() {
   var tableColumns = [];
   for (var i = 0; i < cols.length; i++) {
     if (i == 0) {
-      tableColumns.push({title:colNames[i], field:cols[i], frozen:true});
+      tableColumns.push({title:colNames[i], field:cols[i], frozen:true, headerFilter:true, headerFilterPlaceholder: "Search"});
+    } else if (i==3) {
+      tableColumns.push({title:colNames[i], field:cols[i], headerFilter:"input", headerFilterPlaceholder:"Min Apps", headerFilterFunc:">=", width:100})
     } else if (i == 14) {
-      tableColumns.push({title:colNames[i], field:cols[i], formatter:"tickCross"});
+      tableColumns.push({title:colNames[i], field:cols[i], formatter:"tickCross", headerFilter: "tick", headerFilterFunc: function(headerValue, rowValue, rowData, filterParams){
+        if (headerValue) {
+          return rowValue;
+        } else {
+          return true;
+        }
+      }});
     } else {
       tableColumns.push({title:colNames[i], field:cols[i]});
     }
@@ -106,6 +115,7 @@ function playerTable() {
   
   var table = new Tabulator("#player-table", {
     height:height,
+    cellVertAlign:"middle",
     data:tableData,
     columns: tableColumns,
     layout:"fitData",
@@ -121,5 +131,49 @@ function playerTable() {
 var table = playerTable();
 
 
-
-
+function bestPlayersTable() {
+  var def = bestPlayers['def'];
+  var cre = bestPlayers['cre'];
+  var att = bestPlayers['att'];
+  var tableDiv = document.getElementById('best-players-table');
+  var tbl = document.createElement('table');
+  tbl.style.width = '100%';
+  tbl.style.tableLayout = 'auto';
+  tbl.className = 'table table-borderless';
+  for (var i = 0; i < def.length; i++) {
+    var tr = document.createElement('tr');
+    var num = document.createElement('th');
+    var defPlayer = document.createElement('td');
+    var defScore = document.createElement('td');
+    var empty1 = document.createElement('td');
+    var crePlayer = document.createElement('td');
+    var creScore = document.createElement('td');
+    var empty2 = document.createElement('td');
+    var attPlayer = document.createElement('td');
+    var attScore = document.createElement('td');
+    if (i == 0) {
+      tr.style.fontWeight = 'bold';
+      defPlayer.innerHTML = 'Best Defender';
+      crePlayer.innerHTML = 'Best Creator';
+      attPlayer.innerHTML = 'Best Attacker';
+      defScore.innerHTML = 'Score';
+      creScore.innerHTML = 'Score';
+      attScore.innerHTML = 'Score';
+    } else {
+      num.innerHTML = i;
+      defPlayer.innerHTML = def[i-1][0];
+      crePlayer.innerHTML = cre[i-1][0];
+      attPlayer.innerHTML = att[i-1][0];
+      defScore.innerHTML = Number.parseFloat(def[i-1][1]).toFixed(1);
+      creScore.innerHTML = Number.parseFloat(cre[i-1][1]).toFixed(1);
+      attScore.innerHTML = Number.parseFloat(att[i-1][1]).toFixed(1);
+    }
+    for (var x of [num, defPlayer, defScore, empty1, crePlayer, creScore, empty2, attPlayer, attScore]) {
+      tr.appendChild(x);
+    }
+    tbl.appendChild(tr);
+  }
+  tableDiv.appendChild(tbl);
+  console.log(def,cre,att);
+}
+bestPlayersTable();
