@@ -4,12 +4,42 @@
 {% load static %}
 {% block content %}
 {{players|json_script:'players'}}
+{{playerseasons|json_script:'playerseasons'}}
+{{best_players|json_script:'best_players'}}
+
 
 <div class="content-section">
   <div>
-      <h1><strong>{{ season.game_save.team }}</strong></h1><h4>{{season.end_year}}</h4><a href="{% url 'save-page' season.game_save.pk %}" class="btn btn-secondary" style="background-color: #3c1361;">Back</a><hr>
+    <h1><strong>{{ season.game_save.team }}</strong></h1><h4>{{season.end_year}}</h4>
+    <div class="table">
+      <table style="margin-left: auto; margin-right: auto">
+        <tr>
+          <th>Division:</th>
+          <td>{{season.division}}</td>
+          <th>Position:</th>
+          <td>{{season.position}} / {{season.teams_in_league}}</td>
+        </tr>
+      </table>
+    </div>
+    <a href="{% url 'save-page' season.game_save.pk %}" class="btn btn-secondary" style="background-color: #3c1361;">Edit</a>
+    <a href="{% url 'save-page' season.game_save.pk %}" class="btn btn-secondary">Back</a>
+    <a href="{% url 'save-page' season.game_save.pk %}" class="btn btn-danger">Delete</a>
+    <hr>
   </div>
-  
+  <div class="table text-left"> 
+        <th><strong>Notes:</strong></th>
+        <td><i>{{season.notes}}</i></td>
+  </div>
+  <h3>Players</h3><hr>
+  <div id="player-table">
+  </div><br><br>
+  <h4>Best Players</h4>
+  <div id="best-players-table">
+  </div>
+
+  <div id="valueForMoney">
+    
+  </div>
 </div>
 
 <script type="text/javascript" src="{% static 'js/view_season.js' %}"></script>

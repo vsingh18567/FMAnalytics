@@ -8,11 +8,13 @@
 {% block content %}
 <div class="content-section" style="font-family: arial;">
   {% if user.is_authenticated %}
-  <h2>FM Analytics: {{user.username}}</h2>
+  <h2><strong>FM Analytics: </strong>{{user.username}}</h2>  <hr>
+  <a href="{% url 'create-save' %}" class="btn btn-secondary" style="background-color: #3c1361;">Create New Save</a>
+  <a href="{% url 'view-saves' %}" class="btn btn-secondary" style="background-color: #3c1361;">View Saves</a>
   {% else %}
-  <h2>FM Analytics</h2>
+  <h2>FM Analytics</h2>  <hr>
+
   {% endif %}
-  <hr>
   <div class="text-left" style="padding-left: 8%; padding-right: 8%; ">
     <p><h5>Welcome to FM Analytics!</h5>
     {% if not user.is_authenticated %}

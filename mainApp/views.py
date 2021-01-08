@@ -56,7 +56,7 @@ class ViewSaves(LoginRequiredMixin, View):
     def get(self, request):
         if not request.user.is_authenticated:
             return render('login')
-        saves = Save.objects.filter(user = request.user)
+        saves = Save.objects.filter(user = request.user).order_by('-date')
 
 
         return render(request, 'mainApp/saves.html', {'saves': saves})
@@ -112,7 +112,6 @@ class SaveView(View):
         players_json = serializers.serialize('json', players)
         season_data = []
         seasons = save.season_set.all()
-        calculate_best_players(save)
         for season in seasons:
             season_data.append({
                 'pk': season.pk,
@@ -125,7 +124,7 @@ class SaveView(View):
         season_json = json.dumps(season_data)
         
         save_no = json.dumps(pk)
-        best_players = calculate_best_players(save)
+        best_players = calculate_best_players2(save.player_set.all(), 'name')
         season_positions = json.dumps(calculate_season_positions(save))
         return render(request, 'mainApp/view_save.html', {'save': save, 'players_json': players_json, 'season_json':season_json, 'save_no': save_no, 'season_positions':season_positions, 'best_players': json.dumps(best_players)})
     
@@ -180,8 +179,10 @@ class SeasonView(View):
         if save.user != request.user:
             return render('view-saves')
         season = Season.objects.get(pk=pk2)
-        players = serializers.serialize('json', season.playerseason_set.all())
-        return render(request, 'mainApp/view_season.html', {'season':season, 'players': players})
+        players = json.dumps(dict(Player.objects.values_list('pk', 'name')))
+        best_players = json.dumps(calculate_best_players(season.playerseason_set.all(), 'player_id'))
+        playerseasons = serializers.serialize('json', season.playerseason_set.all())
+        return render(request, 'mainApp/view_season.html', {'season':season, 'players': players, 'playerseasons': playerseasons, 'best_players': best_players})
 
     def post(self, request):
         pass

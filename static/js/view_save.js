@@ -40,8 +40,9 @@ seasonsChart();
 
 function seasonDropdown() {
   var dropdown = document.getElementById('season-dropdown');
-  for (var season of seasonData) {
+  for (var i = seasonData.length - 1; i >= 0; i--) {
     var option = document.createElement('option');
+    var season = seasonData[i];
     option.value = season.pk;
     option.innerHTML = (season.year - 1) + '-' + season.year;
     dropdown.appendChild(option);
@@ -119,6 +120,7 @@ function playerTable() {
     data:tableData,
     columns: tableColumns,
     layout:"fitData",
+    initialSort: [{column: 'appearances', dir:'desc'}],
     rowClick: function(e, row) {
       
       var preName = row.getData()['name'];
