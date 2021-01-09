@@ -18,9 +18,9 @@ from .views import Home, Register
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('', Home.as_view(), name='home'),
-    path('login/', auth_views.LoginView.as_view(template_name='homePage/login.html') , name='login'),
-    path('register/', Register.as_view(), name='register'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='homePage/logout.html'),
-    name='logout')
+	path('', Home.as_view(), name='home'),
+	path('login/', auth_views.LoginView.as_view(template_name='homePage/login.html'), name='login'),
+	path('register/', Register.as_view(), name='register'),
+	path('logout/', auth_views.LogoutView.as_view(template_name='homePage/logout.html'),
+		 name='logout')
 ]

@@ -23,7 +23,7 @@
     </div>
     <a href="{% url 'save-page' season.game_save.pk %}" class="btn btn-secondary" style="background-color: #3c1361;">Edit</a>
     <a href="{% url 'save-page' season.game_save.pk %}" class="btn btn-secondary">Back</a>
-    <a href="{% url 'save-page' season.game_save.pk %}" class="btn btn-danger">Delete</a>
+    <a href="{% url 'delete-season' season.game_save.pk season.pk%}" class="btn btn-danger">Delete</a>
     <hr>
   </div>
   <div class="table text-left"> 
@@ -38,7 +38,6 @@
   </div>
 
   <div id="valueForMoney">
-    
   </div>
 </div>
 
