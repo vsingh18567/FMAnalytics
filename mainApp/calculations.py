@@ -1,5 +1,6 @@
 import pandas as pd
 from .models import Save, Player, Season, PlayerSeason
+from django.db.models import Sum
 
 
 def calculate_season_positions(save: Save):
@@ -136,3 +137,70 @@ def get_years_played(player: Player) -> str:
 		ovr_str += cur_str
 		ovr_str += ", "
 	return ovr_str[:-2]
+
+
+def delete_season(season: Season) -> None:
+
+	def calculate_division(calculation, default=0):
+		try:
+			return calculation()
+		except:
+			return default
+
+	pseasons : list(PlayerSeason) = season.playerseason_set.all()
+	for pseason in pseasons:
+		player : Player = pseason.player
+		player.seasons -= 1
+		if player.seasons == 0:
+			player.delete()
+		else:
+			player.appearances -= pseason.appearances
+			player.minutes -= pseason.minutes
+			player.goals -= pseason.goals
+			player.assists -= pseason.assists
+			player.reds -= pseason.reds
+			player.yellows -= pseason.yellows
+			player.xG -= pseason.xG
+			player.pom -= pseason.pom
+			player.cr_c -= pseason.cr_c
+			player.minutes_per_season = player.minutes / player.seasons
+			player.goals_per_xG = calculate_division(lambda: player.goals / player.xG)
+			player.goals_per_90 = calculate_division(lambda: 90 * player.goals / player.minutes)
+			player.assists_per_90 = calculate_division(lambda: 90 * player.assists / player.minutes)
+			player.goals_per_xG = calculate_division(lambda: player.goals / player.xG)
+			pseason.delete()
+			player.determination, player.teamwork, player.leadership = (0, 0, 0)
+			player.header_percent = 0
+			player.average_rating = 0
+			player.tackles_per_90 = 0
+			player.tackle_ratio = 0
+			player.int_per_90 = 0
+			player.dribbles_per_90 = 0
+			player.pass_completion = 0
+			player.key_passes_per_90 = 0
+			player.cr_c = 0
+			player.shots_per_90 = 0
+			player.shot_percent = 0
+			player.max_value = 0
+			new_pseasons = player.playerseason_set.all()
+			for ps in new_pseasons:
+				season_ratio = ps.minutes / player.minutes
+				player.determination =  ps.determination
+				player.teamwork = ps.teamwork
+				player.leadership = ps.leadership
+				player.header_percent += ps.header_percent * season_ratio
+				player.average_rating += ps.average_rating * season_ratio
+				player.tackles_per_90 += ps.tackles_per_90 * season_ratio
+				player.tackle_ratio += ps.tackle_ratio * season_ratio
+				player.int_per_90 += ps.int_per_90 * season_ratio
+				player.dribbles_per_90 += (90 * ps.dribbles / ps.minutes) * season_ratio
+				player.pass_completion += ps.pass_completion * season_ratio
+				player.key_passes_per_90 += (90 * ps.key_passes / ps.minutes) * season_ratio
+				player.cr_c += ps.cr_c
+				player.shots_per_90 += (90 * ps.shots / ps.minutes) * season_ratio
+				player.shot_percent += ps.shot_percent * season_ratio
+				player.max_value = max(player.max_value, ps.value)
+			player.save()
+			
+
+

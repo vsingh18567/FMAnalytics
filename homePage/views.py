@@ -25,3 +25,5 @@ class Register(View):
 			return redirect('login')
 		else:
 			return render(request, 'homePage/register.html', {'form': form})
+
+

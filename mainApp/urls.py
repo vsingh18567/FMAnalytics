@@ -11,5 +11,6 @@ urlpatterns = [
 	path('save/<int:pk>/delete', DeleteSave.as_view(), name='delete-save'),
 	path('save/<int:pk>/<str:name>', PlayerView.as_view(), name='player-page'),
 	path('save/<int:pk>/season/<int:pk2>', SeasonView.as_view(), name='season-page'),
-	path('save/<int:pk>/season/<int:pk2>/delete', DeleteSeason.as_view(), name='delete-season')
+	path('save/<int:pk>/season/<int:pk2>/delete', DeleteSeason.as_view(), name='delete-season'),
+	path('save/<int:pk>/season/<int:pk2>/edit', EditSeason.as_view(), name='edit-season')
 ]

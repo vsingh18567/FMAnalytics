@@ -8,6 +8,9 @@ const bestPlayers = JSON.parse(JSON.parse(document.getElementById('best_players'
 console.log(seasonData);
 
 function seasonsChart() {
+    if (seasonPositions == null) {
+        return;
+    }
     var coreData = seasonPositions['pos'];
 
     var trace = {
@@ -46,6 +49,9 @@ function seasonDropdown() {
         option.value = season.pk;
         option.innerHTML = (season.year - 1) + '-' + season.year;
         dropdown.appendChild(option);
+    }
+    if (seasonData.length > 0) {
+        document.getElementById("season-btn").disabled = false;
     }
 }
 

@@ -1,0 +1,23 @@
+{% extends "homePage/base.html" %}
+{% block title %} FM | Edit Season {{season.end_year}} {% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="content-section">
+    <h2>Edit Season: {{season.game_save.team}}, {{season.end_year}}</h2>
+    <hr>
+    <div class="text-left" style="padding-left: 8%; padding-right: 8%;" >
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-secondary" style="background-color: #3c1361;" type="submit">Save</button> <a href ="{% url 'season-page' season.game_save.pk season.pk %}" class="btn btn-secondary">Back</a>
+            </div>
+        </form>
+    </div>
+    
+</div>
+
+{% endblock %}

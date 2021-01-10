@@ -1,5 +1,5 @@
 {% extends "homePage/base.html" %}
-{% block title %} Delete Season {% endblock %}
+{% block title %} FM | Delete Season {{season.end_year}}{% endblock %}
 {% load crispy_forms_tags %}
 
 {% block content %}
@@ -12,7 +12,7 @@
             {{ form|crispy }}
         </fieldset>
         <div class="form-group">
-            <button class="btn btn-danger" type="submit">Yes</button> <a href ="#" class="btn btn-secondary">Back</a>
+            <button class="btn btn-danger" type="submit">Yes</button> <a href ="{% url 'season-page' season.game_save.pk season.pk %}" class="btn btn-secondary">Back</a>
         </div>
     </form>
 </div>

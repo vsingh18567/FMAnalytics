@@ -24,6 +24,11 @@ class UploadFile(LoginRequiredMixin, View):
 		form = NewSeasonForm(request.POST, request.FILES)
 		if form.is_valid():
 			data = form.cleaned_data
+			seasons = Save.objects.get(pk=pk).season_set.all()
+			for s in seasons:
+				if s.end_year == data['season_end_year']:
+					messages.warning(request, "You already have a season with that end year in the database.")
+					return render(request, 'mainApp/upload.html', {'pk': pk, 'form': NewSeasonForm()}) 
 			season = Season(
 				game_save=Save.objects.get(pk=pk),
 				end_year=data['season_end_year'],
@@ -32,10 +37,10 @@ class UploadFile(LoginRequiredMixin, View):
 				teams_in_league=data['teams_in_league'],
 				notes=data['notes']
 			)
-			season.save()
 			user_data = UserData(request.FILES['file'], Save.objects.get(pk=pk), season, None)
 			state = user_data._main()
 			if state == "FINE":
+				season.save()
 				return redirect('save-page', pk=pk)
 			elif state == "HTML":
 				messages.warning(request, "Oops - that wasn't an HTML file")
@@ -248,9 +253,49 @@ class DeleteSeason(LoginRequiredMixin, View):
 		return render(request, 'mainApp/delete_season.html', {'season': season})
 
 
-def post(self, request, pk, pk2):
-	season = Season.objects.get(pk=pk2)
-	season.game_save.seasons -= 1
-	season.save()
-	messages.success(request, 'Season deleted')
-	return redirect(f'save-page {pk}')
+	def post(self, request, pk, pk2):
+		season = Season.objects.get(pk=pk2)
+		season.game_save.seasons -= 1
+		season.game_save.save()
+		delete_season(season)
+		season.delete()
+		messages.success(request, 'Season deleted')
+		return redirect('save-page', pk)
+
+
+class EditSeason(LoginRequiredMixin, View):
+
+	def get(self, request, pk, pk2):
+		season = Season.objects.get(pk=pk2)
+		return render(request, 'mainApp/edit_season.html', {'season': season, 'form': EditSeasonForm(initial={
+			"season_end_year": season.end_year,
+			"division": season.division,
+			"position": season.position,
+			"teams_in_league": season.teams_in_league,
+			"notes": season.notes
+		})})
+	
+	def post(self, request, pk, pk2):
+		form = EditSeasonForm(request.POST)
+		season = Season.objects.get(pk=pk2)
+		if form.is_valid():
+			data = form.cleaned_data
+			seasons = Save.objects.get(pk=pk).season_set.all()
+			for s in seasons:
+				if s.end_year == data['season_end_year'] and s.pk != pk2:
+					messages.warning(request, "You already have a season with that end year in the database.")
+					return redirect('edit-season', pk, pk2) 
+			season.end_year = data['season_end_year']
+			season.division = data['division']
+			season.position = data['position']
+			season.teams_in_league = data['teams_in_league']
+			season.notes = data['notes']
+			season.save()
+			return redirect('season-page', pk, pk2)
+		return render(request, 'mainApp/edit_season.html', {'season': season, 'form': EditSeasonForm(initial={
+			"season_end_year": season.end_year,
+			"division": season.division,
+			"position": season.position,
+			"teams_in_league": season.teams_in_league,
+			"notes": season.notes
+		})})
