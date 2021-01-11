@@ -29,6 +29,9 @@ class UploadFile(LoginRequiredMixin, View):
 				if s.end_year == data['season_end_year']:
 					messages.warning(request, "You already have a season with that end year in the database.")
 					return render(request, 'mainApp/upload.html', {'pk': pk, 'form': NewSeasonForm()}) 
+				elif data['teams_in_league'] < data['position']:
+					messages.warning(request, "Your team can't finish lower than the number of teams in the league")
+					return render(request, 'mainApp/upload.html', {'pk': pk, 'form': NewSeasonForm()}) 
 			season = Season(
 				game_save=Save.objects.get(pk=pk),
 				end_year=data['season_end_year'],
@@ -38,9 +41,9 @@ class UploadFile(LoginRequiredMixin, View):
 				notes=data['notes']
 			)
 			user_data = UserData(request.FILES['file'], Save.objects.get(pk=pk), season, None)
+			season.save()
 			state = user_data._main()
 			if state == "FINE":
-				season.save()
 				return redirect('save-page', pk=pk)
 			elif state == "HTML":
 				messages.warning(request, "Oops - that wasn't an HTML file")
@@ -49,8 +52,8 @@ class UploadFile(LoginRequiredMixin, View):
 			else:
 				messages.warning(request,
 								 "Hmm, that HTML file was weird. Are you sure you're using the correct squad view?")
+			season.delete()
 			return render(request, 'mainApp/upload.html', {'pk': pk, 'form': NewSeasonForm()})
-
 		else:
 			return redirect('home')
 
@@ -285,12 +288,16 @@ class EditSeason(LoginRequiredMixin, View):
 				if s.end_year == data['season_end_year'] and s.pk != pk2:
 					messages.warning(request, "You already have a season with that end year in the database.")
 					return redirect('edit-season', pk, pk2) 
+				elif data['teams_in_league'] < data['position']:
+					messages.warning(request, "Your team can't finish lower than the number of teams in the league")
+					return redirect('edit-season', pk, pk2) 
 			season.end_year = data['season_end_year']
 			season.division = data['division']
 			season.position = data['position']
 			season.teams_in_league = data['teams_in_league']
 			season.notes = data['notes']
 			season.save()
+			messages.success(request, "Season edited successfully")
 			return redirect('season-page', pk, pk2)
 		return render(request, 'mainApp/edit_season.html', {'season': season, 'form': EditSeasonForm(initial={
 			"season_end_year": season.end_year,

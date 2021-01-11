@@ -21,7 +21,7 @@ class Register(View):
 		if form.is_valid():
 			form.save()
 			username = form.cleaned_data.get('username')
-			messages.success(request, f'Welcome {username}! Please log-in below')
+			messages.success(request, f'Welcome {username}! Please login below')
 			return redirect('login')
 		else:
 			return render(request, 'homePage/register.html', {'form': form})

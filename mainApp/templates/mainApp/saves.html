@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="content-section">
-    <h1>Your Saves</h1>
+    <h1>{{user.username}}'s saves</h1>
     <div>
         <a href="{% url 'create-save' %}" class="btn btn-secondary" style="background-color: #3c1361;">Create New Save</a>
     </div>

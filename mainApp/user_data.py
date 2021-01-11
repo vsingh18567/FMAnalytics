@@ -49,6 +49,7 @@ class UserData:
 				rows.append(cols)
 			headers = [td.get_text(strip=True) for td in table.find_all('th')]
 			df = pd.DataFrame(rows[1:], columns=headers)
+			print(df)
 			return df
 		except:
 			self.state = "PANDAS"
@@ -233,18 +234,18 @@ class UserData:
 		player.save()
 
 	def _main(self):
+		print(self.state)
 		if self.state == "HTML":
 			return self.state
 		df: pd.DataFrame = self.parse_html()
 		if self.state == "PANDAS":
 			return self.state
-		try:
-			for row in df.iterrows():
-				player: Player = self.get_player(row[1])
-				self.add_data(player, row[1])
-			self.game_save.seasons = len(self.game_save.season_set.all())
-			self.game_save.save()
-			return self.state
-		except:
-			self.state = "PARSING"
-			return self.state
+		for row in df.iterrows():
+			player: Player = self.get_player(row[1])
+			self.add_data(player, row[1])
+		self.game_save.seasons = len(self.game_save.season_set.all())
+		self.game_save.save()
+		return self.state
+		# except:
+		# 	self.state = "PARSING"
+		# 	return self.state
