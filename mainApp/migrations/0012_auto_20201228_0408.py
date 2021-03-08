@@ -6,19 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mainApp', '0011_auto_20201228_0406'),
+        ("mainApp", "0011_auto_20201228_0406"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='playerseason',
-            name='assists_per_90',
+            model_name="playerseason",
+            name="assists_per_90",
             field=models.FloatField(default=0.0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='playerseason',
-            name='goals_per_90',
+            model_name="playerseason",
+            name="goals_per_90",
             field=models.FloatField(default=0),
             preserve_default=False,
         ),

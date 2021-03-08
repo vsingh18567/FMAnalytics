@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mainApp', '0009_season_teams_in_league'),
+        ("mainApp", "0009_season_teams_in_league"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='season',
-            name='notes',
+            model_name="season",
+            name="notes",
             field=models.TextField(blank=True, null=True),
         ),
     ]

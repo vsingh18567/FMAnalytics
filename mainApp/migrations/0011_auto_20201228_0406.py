@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mainApp', '0010_auto_20201227_1406'),
+        ("mainApp", "0010_auto_20201227_1406"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='player',
-            name='assists_per_90',
+            model_name="player",
+            name="assists_per_90",
             field=models.FloatField(default=0),
         ),
         migrations.AddField(
-            model_name='player',
-            name='goals_per_90',
+            model_name="player",
+            name="goals_per_90",
             field=models.FloatField(default=0),
         ),
         migrations.AddField(
-            model_name='player',
-            name='minutes_per_season',
+            model_name="player",
+            name="minutes_per_season",
             field=models.FloatField(default=0),
         ),
     ]

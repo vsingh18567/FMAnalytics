@@ -6,49 +6,49 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mainApp', '0012_auto_20201228_0408'),
+        ("mainApp", "0012_auto_20201228_0408"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='player',
-            name='cr_c',
+            model_name="player",
+            name="cr_c",
             field=models.IntegerField(default=0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='player',
-            name='determination',
+            model_name="player",
+            name="determination",
             field=models.IntegerField(default=0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='player',
-            name='header_percent',
+            model_name="player",
+            name="header_percent",
             field=models.IntegerField(default=0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='player',
-            name='leadership',
+            model_name="player",
+            name="leadership",
             field=models.IntegerField(default=0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='player',
-            name='shot_percent',
+            model_name="player",
+            name="shot_percent",
             field=models.IntegerField(default=0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='player',
-            name='tackle_ratio',
+            model_name="player",
+            name="tackle_ratio",
             field=models.FloatField(default=0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='player',
-            name='teamwork',
+            model_name="player",
+            name="teamwork",
             field=models.IntegerField(default=0),
             preserve_default=False,
         ),

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mainApp', '0008_auto_20201226_0350'),
+        ("mainApp", "0008_auto_20201226_0350"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='season',
-            name='teams_in_league',
+            model_name="season",
+            name="teams_in_league",
             field=models.IntegerField(default=20),
         ),
     ]
