@@ -30,9 +30,6 @@
       <li>Go to your save's "Upload New Season" page, and upload the HTML document there with some other information about your season. Done!</li>
     </ul>
     <br>
-    {% if not user.is_authenticated %}
-    <p><strong>Don't know whether this is worth all the time/effort?</strong> Feel free to <a href="{% url 'login' %}">log in</a> with a dummy account (Username: dummyuser, Password: dummypassword) and see what it's all about!</p>
-    {% endif %}
     <h3>Caveats</h3><hr>
     <p>Unfortunately, given that the app needs a specifically-formatted squad-view, there are a few restrictions on who can use the app:</p>
     <ul>
