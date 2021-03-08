@@ -33,7 +33,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', '%s$22-+1*z!q1e$6!5t^jwq__%+$(#o8v$^@_
 DEBUG = os.environ.get('DJANGO_DEBUG', '') in ['True', 'true']
 
 
-ALLOWED_HOSTS = ['fmanalytics.heorkuapp.com','127.0.0.1']
+ALLOWED_HOSTS = ['fmanalytics.herokuapp.com/','127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
